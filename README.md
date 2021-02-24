@@ -9,3 +9,19 @@ Les om Variant her: <https://www.variant.no/>.
 ## Developer Information 🙋🏼‍♂️
 
 Developed by Magnus Rødseth.
+
+## Developer Documentation
+
+```
+# Navigate to repository
+cd variant-kurs
+
+# Install dependencies
+yarn
+
+# Start the project
+yarn start
+
+# Open project in browser
+Go to: http://localhost:1234
+```
