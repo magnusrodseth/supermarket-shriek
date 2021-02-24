@@ -1,0 +1,38 @@
+body {
+  font-family: sans-serif;
+}
+#app {
+  position: relative;
+}
+#player {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.volume {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  background: #fff;
+}
+
+.volume progress {
+  display: block;
+  margin: auto;
+
+  border-radius: 7px;
+  width: 80%;
+  height: 22px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+.volume progress::-webkit-progress-bar {
+  background-color: #423d89;
+}
+.volume progress::-webkit-progress-value {
+  background-color: #e61a6b;
+}

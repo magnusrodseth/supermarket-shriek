@@ -1,0 +1,23 @@
+body {
+  font-family: sans-serif;
+}
+
+#app {
+  position: relative;
+}
+
+.player {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+#player {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nick {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
