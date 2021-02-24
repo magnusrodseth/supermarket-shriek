@@ -7,8 +7,9 @@ import {
   TransformData,
 } from "../types";
 
-// Change serverId to something random
+// TODO: Change serverId to something random and usable
 const serverId = "test-shriek-local";
+
 const peer = new Peer(serverId, { debug: 2 });
 
 const UPDATE_RATE_MULTIPLAYER_IN_MS = 200;
@@ -16,96 +17,107 @@ const UPDATE_RATE_MULTIPLAYER_IN_MS = 200;
 const wallElements = extractElementChildren(
   document.querySelector("#walls").children
 );
+
 const goalElement = extractElementChildren(
   document.querySelector("#goal").children
 );
+
 const getOpponents = () =>
   extractElementChildren(document.querySelectorAll(".player"));
-const goalElementPos = document.querySelector("#goal").getBoundingClientRect();
 
-function updateMultiplayer() {
+const goalElementPosition = document.querySelector("#goal").getBoundingClientRect();
+
+/**
+ * TODO: Add some great docs here
+ */
+const updateMultiplayer = () => {
   const opponents = getOpponents();
-  // broadcast({ type: "update-opponents", payload:  });
 
   Object.entries(peer.connections).forEach(
     ([key, setOfConnections]: [string, any]) => {
-      setOfConnections.forEach((con: Peer.DataConnection) => {
+      setOfConnections.forEach((connection: Peer.DataConnection) => {
         const filteredOpponents = opponents.filter(
           (node) => !getAttribute<string>(node, "id")?.includes(key)
         );
-        send(con, { type: "update-opponents", payload: filteredOpponents });
+        send(connection, { type: "update-opponents", payload: filteredOpponents });
       });
     }
   );
 }
 setInterval(updateMultiplayer, UPDATE_RATE_MULTIPLAYER_IN_MS);
 
-function draw(pos: TransformData, playerEl: Element) {
-  const transform = `translate(${pos.x}, ${pos.y}) rotate(${pos.degrees})`;
-  playerEl.setAttribute("transform", transform);
-}
-function drawNick(pos: TransformData, nickDiv: HTMLElement) {
-  const baseX = 50;
-  const baseY = 30;
-  nickDiv.style.left = `${baseX + pos.x}px`; //`${transform} rotate(0)`;
-  nickDiv.style.top = `${baseY + pos.y}px`; //`${transform} rotate(0)`;
+const draw = (position: TransformData, playerElement: Element) => {
+  const transform = `translate(${position.x}, ${position.y}) rotate(${position.degrees})`;
+  playerElement.setAttribute("transform", transform);
 }
 
-peer.on("open", function () {
+const drawNickname = (position: TransformData, nicknameDiv: HTMLElement) => {
+  const baseX = 50;
+  const baseY = 30;
+  nicknameDiv.style.left = `${baseX + position.x}px`; //`${transform} rotate(0)`;
+  nicknameDiv.style.top = `${baseY + position.y}px`; //`${transform} rotate(0)`;
+}
+
+peer.on("open", () => {
   document.querySelector("#server-id").innerHTML = peer.id;
   console.log("ID: " + peer.id);
 });
-peer.on("error", function (err) {
+
+peer.on("error", (err) => {
   console.log(err);
 });
 
-function send(conn: Peer.DataConnection, message: RecieveDataPayload) {
-  return conn.send(message);
+const send = (connection: Peer.DataConnection, message: RecieveDataPayload) => {
+  return connection.send(message);
 }
-function broadcast(message: RecieveDataPayload) {
+
+const broadcast = (message: RecieveDataPayload) => {
   Object.values(peer.connections).forEach((setOfConnections: any) => {
-    setOfConnections.forEach((con: Peer.DataConnection) => send(con, message));
+    setOfConnections.forEach((connection: Peer.DataConnection) => send(connection, message));
   });
 }
 
-peer.on("connection", (conn) => {
-  const playerId = conn.peer;
-  const playerEl = spawnPlayer(playerId);
-  const playerNick = spawNickBox(playerId);
+peer.on("connection", (connection) => {
+  const playerId = connection.peer;
+  const playerElement = spawnPlayer(playerId);
+  const playerNickname = spawnNicknameBox(playerId);
 
-  conn.on("data", (data: SendDataPayload) => {
+  connection.on("data", (data: SendDataPayload) => {
     switch (data.type) {
       case "transform":
-        draw(data.payload, playerEl);
-        drawNick(data.payload, playerNick);
+        draw(data.payload, playerElement);
+        drawNickname(data.payload, playerNickname);
 
-        if (checkWinner(playerEl)) {
+        if (checkWinner(playerElement)) {
           broadcast({
             type: "winner",
-            payload: playerNick.innerText,
+            payload: playerNickname.innerText,
           });
         }
         break;
       case "nick":
-        playerNick.innerText = data.payload?.slice(0, 10);
+        playerNickname.innerText = data.payload?.slice(0, 10);
         break;
     }
   });
-  conn.on("open", () => {
-    send(conn, { type: "walls", payload: wallElements });
-    send(conn, { type: "goal", payload: goalElement });
+
+  connection.on("open", () => {
+    send(connection, { type: "walls", payload: wallElements });
+    send(connection, { type: "goal", payload: goalElement });
   });
-  conn.on("close", () => {
+
+  connection.on("close", () => {
     despawn(playerId);
-    send(conn, { type: "remove-opponents", payload: playerId });
+    send(connection, { type: "remove-opponents", payload: playerId });
   });
 });
 
 const svgRoot = document.querySelector("svg");
 const appRoot = document.querySelector("#app");
 
-function spawnPlayer(playerId: string) {
+const spawnPlayer = (playerId: string) => {
   const playerColor = getRandomColor();
+
   // const playerSvgEl = document.createElementNS(
   //   "http://www.w3.org/2000/svg",
   //   "g"
@@ -114,30 +126,30 @@ function spawnPlayer(playerId: string) {
   // playerSvgEl.classList.add("player");
   // playerSvgEl.setAttribute("data-color", playerColor);
 
-  const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  pathEl.setAttribute("d", "M44 42.6795L74 60L44 77.3205L44 42.6795Z");
-  pathEl.setAttribute("stroke", playerColor);
-  pathEl.setAttribute("stroke-width", "6");
-  pathEl.id = playerId;
-  pathEl.classList.add("player");
+  const pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  pathElement.setAttribute("d", "M44 42.6795L74 60L44 77.3205L44 42.6795Z");
+  pathElement.setAttribute("stroke", playerColor);
+  pathElement.setAttribute("stroke-width", "6");
+  pathElement.id = playerId;
+  pathElement.classList.add("player");
 
   // playerSvgEl.appendChild(pathEl);
-  svgRoot.appendChild(pathEl);
-  return pathEl;
+  svgRoot.appendChild(pathElement);
+  return pathElement;
 }
 
-function checkWinner(player: Element) {
-  var playerRect = player.getBoundingClientRect();
+const checkWinner = (player: Element) => {
+  const playerPosition = player.getBoundingClientRect();
 
   return !(
-    goalElementPos.left > playerRect.right ||
-    goalElementPos.right < playerRect.left ||
-    goalElementPos.top > playerRect.bottom ||
-    goalElementPos.bottom < playerRect.top
+    goalElementPosition.left > playerPosition.right ||
+    goalElementPosition.right < playerPosition.left ||
+    goalElementPosition.top > playerPosition.bottom ||
+    goalElementPosition.bottom < playerPosition.top
   );
 }
 
-function spawNickBox(playerId: string) {
+const spawnNicknameBox = (playerId: string) => {
   const div = document.createElement("div");
   div.className = "nick";
   div.id = `${playerId}-nick`;
@@ -145,31 +157,40 @@ function spawNickBox(playerId: string) {
   return div;
 }
 
-function despawn(playerId: string) {
-  const el = document.querySelector(`#${playerId}`);
-  if (el) el.remove();
+const despawn = (playerId: string) => {
+  const element = document.querySelector(`#${playerId}`);
+
+  if (element)
+    element.remove();
+
   const nick = document.querySelector(`#${playerId}-nick`);
-  if (nick) nick.remove();
+
+  if (nick)
+    nick.remove();
 }
 
-function getRandomColor() {
-  var letters = "0123456789ABCDEF";
-  var color = "#";
-  for (var i = 0; i < 6; i++) {
+const getRandomColor = () => {
+  // TODO: Add some pleasing colors and select from these
+  const letters = "0123456789ABCDEF";
+
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
 }
 
-function extractAttributes(attributes: NamedNodeMap): CustomAttributes[] {
+const extractAttributes = (attributes: NamedNodeMap): CustomAttributes[] => {
   const map = [];
+
   for (let i = 0; i < attributes.length; i++) {
-    const attr = attributes.item(i);
-    map.push({ name: attr.name, value: attr.value });
+    const attribute = attributes.item(i);
+    map.push({ name: attribute.name, value: attribute.value });
   }
   return map;
 }
 
+// TODO: Why can't this be const instead of function?
 function extractElementChildren(
   children: HTMLCollection | NodeListOf<Element>
 ): CustomElement[] {
@@ -184,9 +205,10 @@ function extractElementChildren(
   return map;
 }
 
-function getAttribute<T>(node: CustomElement, name: string): T | undefined {
+const getAttribute = <T>(node: CustomElement, name: string): T | undefined => {
   for (let attr of node.attributes) {
-    if (attr.name === name) return attr.value as T;
+    if (attr.name === name)
+      return attr.value as T;
   }
   return undefined;
 }

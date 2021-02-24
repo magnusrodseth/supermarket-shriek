@@ -1,5 +1,0 @@
-////////////////////////////////////////
-// Lag en ControlInput modul som holder tilstand på venstre/høyre.
-////////////////////////////////////////
-export function controlsInput() {
-}

@@ -24,19 +24,17 @@ export default class World {
   }
 
   drawWalls(nodes: CustomElement[]) {
-    if (this.walls.children.length === 0) {
+    if (this.walls.children.length === 0)
       createSvgNodes(nodes).forEach((svgEl) => {
         this.walls.appendChild(svgEl);
       });
-    }
   }
 
   drawGoal(nodes: CustomElement[]) {
-    if (this.goal.children.length === 0) {
+    if (this.goal.children.length === 0)
       createSvgNodes(nodes).forEach((svgEl) => {
         this.goal.appendChild(svgEl);
       });
-    }
   }
 
   updateOpponents(nodes: CustomElement[]) {
@@ -45,9 +43,9 @@ export default class World {
 
   removeOpponents(playerId: string) {
     const svgEl = this.opponents.querySelector(`#player-${playerId}`);
-    if (svgEl) {
+
+    if (svgEl)
       svgEl.remove();
-    }
   }
 
   private createOrUpdateNode = (node: CustomElement) => {
@@ -67,25 +65,27 @@ export default class World {
   };
 }
 
-function getAttribute(node: CustomElement, name) {
-  for (let attr of node.attributes) {
-    if (attr.name === name) return attr.value;
+const getAttribute = (node: CustomElement, name) => {
+  for (let attribute of node.attributes) {
+    if (attribute.name === name)
+      return attribute.value;
   }
   return undefined;
 }
 
-function createSvgNodes(nodes: CustomElement[]) {
+const createSvgNodes = (nodes: CustomElement[]) => {
   return nodes.map(createNode);
 }
 
-function createNode(node: CustomElement) {
-  const svgEl = document.createElementNS(
+const createNode = (node: CustomElement) => {
+  const svgElement = document.createElementNS(
     "http://www.w3.org/2000/svg",
     node.nodeName
   );
+
   Array.from(node.attributes).forEach((a) => {
-    svgEl.setAttribute(a.name, a.value);
+    svgElement.setAttribute(a.name, a.value);
   });
 
-  return svgEl;
+  return svgElement;
 }

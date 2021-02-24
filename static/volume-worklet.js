@@ -12,7 +12,7 @@ registerProcessor(
     }
 
     process(inputs, outputs, parameters) {
-      // select first channel (should be mono from microphone)
+      // Select first channel (should be mono from microphone)
       const channel = inputs[0];
 
       // Make sure something is connected
@@ -28,7 +28,7 @@ registerProcessor(
         // the RMS approximates a volume across samples in current frame
         const currentVolume = Math.sqrt(squaredSum / samples.length);
 
-        // sampleRate is available from the AudioWorklet global scope:
+        // The sampleRate is available from the AudioWorklet global scope:
         // https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletGlobalScope
         // sampleRate is expressed in hertz, like 48000 Hz
         // Hertz in this case means samples per second
@@ -45,17 +45,19 @@ registerProcessor(
           // Set current frame as update frame
           this.previousSampleUpdateFrame = currentFrame;
 
-          // Calculate avg volume from all processed
-          // audio blocks since last update
+          // Calculate average volume from all processed audio blocks since last update
           let numberOfCalculatedVolumes =
             this.previousAudioBlockVolumes.length + 1;
+
           let volumeBlocksSum = currentVolume;
+
           for (let i = 0; i < this.previousAudioBlockVolumes.length; ++i)
             volumeBlocksSum += this.previousAudioBlockVolumes[i];
+
           const avgVolumeAcrossAudioBlocks =
             volumeBlocksSum / numberOfCalculatedVolumes;
 
-          // reset volume cache
+          // Reset volume cache
           this.previousAudioBlockVolumes = [];
 
           // Fast attack, slow release

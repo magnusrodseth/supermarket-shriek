@@ -39,7 +39,7 @@ document.addEventListener('keyup', (event) => {
 })
 
 // Game loop
-function loop() {
+const loop = () => {
     const position = cart.updateByVolume(left, right, volume);
 
     const transform = `translate(${position.x}, ${position.y}) rotate(${position.degrees})`;
@@ -51,8 +51,10 @@ requestAnimationFrame(loop);
 
 // Connect to server
 const peerClient = connectPeer(() => {
+    // Payload is the user's nickname
     peerClient.send({ type: 'nick', payload: 'Donkey' });
 });
+
 peerClient.onData((data) => {
     switch (data.type) {
         case 'walls':
@@ -64,7 +66,7 @@ peerClient.onData((data) => {
         case 'remove-opponents':
             return world.removeOpponents(data.payload);
         case 'winner':
-            alert('Winner!!\n The winner is... ' + data.payload);
+            alert(`Winner!\n The winner is... ${data.payload}`);
             return cart.reset();
     }
 });

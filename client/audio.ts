@@ -1,7 +1,5 @@
-////////////////////////////////////////
-// Step 1: Connecting to user media to retrieve volume.
-////////////////////////////////////////
-export async function askMicrophonePermission(onVolume: (volume: number) => void) {
+// Connecting to user media to retrieve volume.
+const askMicrophonePermission = async (onVolume: (volume: number) => void) => {
     const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
     });

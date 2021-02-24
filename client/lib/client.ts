@@ -1,23 +1,26 @@
 import Peer from "peerjs";
 import { RecieveDataPayload, SendDataPayload } from "../../types";
 
-// Change serverId to something random
+// TODO: Change serverId to something random and usable
 const serverId = "test-shriek-local";
 
 type Listener = (data: RecieveDataPayload) => void;
-export default function connect(onConnect: () => void) {
-  let connIsOpened = false;
-  let conn: Peer.DataConnection = null;
 
-  let listener: Listener = () => {};
+const connect = (onConnect: () => void) => {
+  let connectionIsOpened = false;
+  let connection: Peer.DataConnection = null;
+
+  let listener: Listener = () => { };
+
   const peer = new Peer(null, { debug: 2 });
+
   peer.on("open", (c) => {
-    conn = peer.connect(serverId);
-    conn.on("open", () => {
-      connIsOpened = true;
+    connection = peer.connect(serverId);
+    connection.on("open", () => {
+      connectionIsOpened = true;
       onConnect();
     });
-    conn.on("data", listener);
+    connection.on("data", listener);
   });
 
   return {
@@ -25,9 +28,10 @@ export default function connect(onConnect: () => void) {
       listener = cb;
     },
     send: (data: SendDataPayload) => {
-      if (connIsOpened) {
-        conn.send(data);
-      }
+      if (connectionIsOpened)
+        connection.send(data);
     },
   };
 }
+
+export default connect;

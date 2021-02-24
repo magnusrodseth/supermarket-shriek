@@ -1,4 +1,7 @@
-export default function createTestVolumeProgress() {
+/**
+ * Redundant method. Keep until further notics, but should be usable anymore.
+ */
+const createTestVolumeProgress = () => {
   const div = document.createElement("div");
   div.classList.add("volume");
 
@@ -13,3 +16,5 @@ export default function createTestVolumeProgress() {
     progress.value = volume;
   };
 }
+
+export default createTestVolumeProgress;
