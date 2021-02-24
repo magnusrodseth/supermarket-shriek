@@ -1,4 +1,4 @@
-# Kurs med Variant 🎮
+# Supermarket Shriek 🎮
 
 ## Description 📄
 
@@ -14,7 +14,7 @@ Developed by Magnus Rødseth.
 
 ```
 # Navigate to repository
-cd variant-kurs
+cd supermarket-shriek
 
 # Install dependencies
 yarn
