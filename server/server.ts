@@ -6,6 +6,8 @@ import {
   SendDataPayload,
   TransformData,
 } from "../types";
+
+// Change serverId to something random
 const serverId = "test-shriek-local";
 const peer = new Peer(serverId, { debug: 2 });
 

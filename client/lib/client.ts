@@ -1,5 +1,7 @@
 import Peer from "peerjs";
 import { RecieveDataPayload, SendDataPayload } from "../../types";
+
+// Change serverId to something random
 const serverId = "test-shriek-local";
 
 type Listener = (data: RecieveDataPayload) => void;
