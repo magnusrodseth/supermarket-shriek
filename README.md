@@ -12,7 +12,7 @@ Developed by Magnus Rødseth.
 
 ## Developer Documentation
 
-```
+```javascript
 # Navigate to repository
 cd supermarket-shriek
 
