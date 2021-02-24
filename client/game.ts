@@ -14,6 +14,7 @@ import World from "./lib/world";
 import connectPeer from "./lib/client";
 // ------
 
+
 ////////////////////////////////////////
 // Oppgave 1: Volume progress (20min)
 // 1. Implementer uthenting av volum basert på
@@ -22,8 +23,11 @@ import connectPeer from "./lib/client";
 //    at alt fungerer.
 ////////////////////////////////////////
 // Tool to help you test volume
-// const setTestVolume = createTestVolumeProgress();
-// setTestVolume(0.5); // example
+const setTestVolume = createTestVolumeProgress();
+
+askMicrophonePermission((volume) => {
+    setTestVolume(volume * 5);
+});
 
 ////////////////////////////////////////
 // Oppgave 2: Drag race (15min)
