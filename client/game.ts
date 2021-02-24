@@ -23,10 +23,12 @@ import connectPeer from "./lib/client";
 //    at alt fungerer.
 ////////////////////////////////////////
 // Tool to help you test volume
-const setTestVolume = createTestVolumeProgress();
+
+let xPosition = 0;
+const MOVEMENT_RATIO = 100;
 
 askMicrophonePermission((volume) => {
-    setTestVolume(volume * 5);
+    xPosition += volume * MOVEMENT_RATIO;
 });
 
 ////////////////////////////////////////
@@ -35,6 +37,14 @@ askMicrophonePermission((volume) => {
 // 2. Hent ut player fra DOM, bruk Volume fra tidligere
 //    til å kjøre translateX på Player-elementet.
 ////////////////////////////////////////
+
+// Fetch #player from DOM and move it using microphone
+function loop() {
+    const player = document.querySelector('#player');
+    player.setAttribute('transform', `translate(${xPosition}, 0)`);
+    requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
 
 ////////////////////////////////////////
 // Oppgave 3: Event Listeners (10min)
