@@ -1,4 +1,4 @@
-# Kurs med Variant
+# Kurs med Variant 🎮
 
 ## Description 📄
 
